@@ -1,0 +1,17 @@
+version: "3"
+services:
+  backend:
+    build: backend
+    restart: unless-stopped
+    ports:
+     - "8080:8080"
+    volumes: 
+      - /usr/src/interview
+  frontend:
+    build: frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+
