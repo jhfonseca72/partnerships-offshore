@@ -2,7 +2,10 @@ package com.vivid.partnerships.interview.services;
 
 import com.vivid.partnerships.interview.entities.Event;
 import com.vivid.partnerships.interview.entities.Venue;
+import com.vivid.partnerships.interview.execptions.EventException;
 import com.vivid.partnerships.interview.mappers.EventRowMapper;
+import com.vivid.partnerships.interview.repository.EventRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -11,31 +14,18 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class EventService {
 
-    private final JdbcTemplate jdbcTemplate;
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final EventRepository eventRepository;
 
-    private static final String SELECT_EVENTS_WITH_VENUE = "SELECT e.id, e.name, e.date, v.id id_venue, v.name name_venue, v.city, v.state FROM events e JOIN venue v ON e.venue = v.id";
-    private static final String SELECT_EVENT_BY_ID = "SELECT e.id, e.name, e.date, v.id id_venue, v.name name_venue, v.city, v.state FROM events e JOIN venue v ON e.venue = v.id WHERE e.id = ?";
-    private static final String INSERT_VENUE = "INSERT INTO venue(name, city, state) VALUES (:name, :city, :state)";
-    private static final String INSERT_EVENT = "INSERT INTO events(name, date, venue) VALUES (:name, :date, :venue)";
-    private static final int RECORDS_NOT_FOUND = 0;
-
-    /**
-     * @param jdbcTemplate
-     * @param namedParameterJdbcTemplate
-     */
-    @Autowired
-    public EventService(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
-    }
 
     /**
      * Get all events registered in database
@@ -43,7 +33,7 @@ public class EventService {
      * @return
      */
     public List<Event> getEvents() {
-        return jdbcTemplate.query(SELECT_EVENTS_WITH_VENUE, new EventRowMapper());
+        return this.eventRepository.getEvents();
     }
 
     /**
@@ -52,61 +42,39 @@ public class EventService {
      * @param event {@link Event} object to register
      * @return {@link Event} object registered
      */
-    public Event createEventWithNewVenue(final Event event) {
-        this.createVenue(event.getVenue()).ifPresent(venue -> event.setVenue(venue));
-        return this.createEvent(event).orElse(null);
+    public Event createEventWithNewVenue(final Event event) throws EventException {
+        applyValidationRules(event);
+        return this.eventRepository.createEventWithNewVenue(event)
+                .orElseThrow(() -> EventException.EventMessage.EVENT_SAVE_ERROR.build());
     }
 
     /**
-     * Create a new event
-     *
-     * @param event {@link Event}
-     * @return {@link Optional}
+     * Verify all invariants and if no fulfill some rule must to throw a bussines exception
      */
-    public Optional<Event> createEvent(final Event event) {
+    private void applyValidationRules(final Event event) throws EventException {
 
-        KeyHolder holder = new GeneratedKeyHolder();
-        SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("name", event.getName())
-                .addValue("date", event.getDate())
-                .addValue("venue", event.getVenue().getId());
+        if (StringUtils.isEmpty(event.getName())) {
+            throw EventException.EventMessage.EVENT_NAME_NOT_FOUND.build();
+        }
 
-        namedParameterJdbcTemplate.update(INSERT_EVENT, parameters, holder);
-        event.setId(holder.getKey().intValue());
+        if (Objects.isNull(event.getDate())) {
+            throw EventException.EventMessage.EVENT_DATE_NOT_FOUND.build();
+        }
 
-        return event.getId() <= RECORDS_NOT_FOUND ? Optional.empty() :
-                Optional.of(this.findEventById(event.getId()));
-    }
+        if (StringUtils.isEmpty(event.getVenue())) {
+            throw EventException.EventMessage.VENUE_NOT_FOUND.build();
+        }
 
-    /**
-     * Create a new Venue
-     *
-     * @param venue
-     * @return
-     */
-    public Optional<Venue> createVenue(Venue venue) {
+        if (StringUtils.isEmpty(event.getVenue().getName())) {
+            throw EventException.EventMessage.VENUE_NAME_NOT_FOUND.build();
+        }
 
-        KeyHolder holder = new GeneratedKeyHolder();
-        SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("name", venue.getName())
-                .addValue("city", venue.getCity())
-                .addValue("state", venue.getState());
+        if (StringUtils.isEmpty(event.getVenue().getCity())) {
+            throw EventException.EventMessage.VENUE_CITY_NOT_FOUND.build();
+        }
 
-        namedParameterJdbcTemplate.update(INSERT_VENUE, parameters, holder);
-        venue.setId(holder.getKey().intValue());
-
-        return venue.getId() <= RECORDS_NOT_FOUND ? Optional.empty() : Optional.of(venue);
-    }
-
-
-    /**
-     * Find an event by id
-     *
-     * @param idEvent {@link Integer} event's id
-     * @return {@link Event} event founded in the database applying the filter by id
-     */
-    public Event findEventById(Integer idEvent) {
-        return jdbcTemplate.queryForObject(SELECT_EVENT_BY_ID,
-                new Object[]{idEvent}, new EventRowMapper());
+        if (StringUtils.isEmpty(event.getVenue().getState())) {
+            throw EventException.EventMessage.VENUE_STATE_NOT_FOUND.build();
+        }
     }
 }

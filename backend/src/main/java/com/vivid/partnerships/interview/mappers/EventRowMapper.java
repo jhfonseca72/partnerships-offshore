@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class EventRowMapper implements RowMapper<Event> {
+
     @Nullable
     @Override
     public Event mapRow(ResultSet resultSet, int rowNum) throws SQLException {

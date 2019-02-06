@@ -3,13 +3,21 @@ const API = 'http://localhost:8080/events';
 
 class EventService {
     async getAllEvents() {
-        const allEvents = await axios.get(API);        
-        return allEvents.data;
+        try {
+            const allEvents = await axios.get(API);
+            return allEvents.data;
+        } catch (error) {
+            throw new Error(error.response.data.message);
+        }
     };
 
     async createEvent(event) {
-        const eventCreated = await axios.post(API, event);
-        return eventCreated;
+        try {
+            const eventCreated = await axios.post(API, event);
+            return eventCreated;
+        } catch (error) {
+            throw new Error(error.response.data.message);
+        }
     }
 }
 

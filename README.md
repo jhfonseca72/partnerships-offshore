@@ -49,6 +49,10 @@ You should get a response like this:
 
 ### Frontend
 
+The first thing to do is install the necessary dependencies using the following command:
+
+`npm install`
+
 Execute the next command in this folder `frontend`
 
 `npm run start`
@@ -74,7 +78,6 @@ The configuration was realized using flyway the scheme can be founded in the fil
 ##Pending
 
 * Add forms validations.
-* file to execute the deploy in linux `build.sh`
 
 ## Others
 
