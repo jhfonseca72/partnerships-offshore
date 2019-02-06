@@ -13,6 +13,9 @@ cd backend
 ## Folder frontend service
 cd ../frontend
 
+## Download dependencies
+npm install
+
 ## Compiling frontend service
 npm run build
 

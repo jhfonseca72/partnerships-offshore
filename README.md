@@ -63,9 +63,11 @@ Verify by entering the following url
 
 ## How to execute with Docker
 
-You only need to run the file build.bat and automatically the images for each project will be build and executed
+You only need to run the file (build.bat for windows) or (build.sh for linux) and automatically the images for each project will 
+be builded and executed
 
-`./build.bat`
+Windows - `./build.bat`
+Linux - `./build.sh`
 
 Verify by entering the following url
 

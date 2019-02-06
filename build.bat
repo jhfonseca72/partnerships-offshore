@@ -12,6 +12,9 @@ call ./gradlew.bat build
 @rem Folder frontend service
 cd ..\frontend
 
+rem Download depedencies
+call npm install
+
 rem Compiling frontend service
 call npm run build
 
