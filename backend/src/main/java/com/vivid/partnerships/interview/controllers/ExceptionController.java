@@ -14,21 +14,11 @@ import java.util.Optional;
 @RequestMapping(produces = "application/json")
 public class ExceptionController {
 
-    /**
-     * @param e
-     * @return
-     */
     @ExceptionHandler(EventException.class)
     public ResponseEntity<HttpError> notFoundException(final EventException e) {
         return error(e, HttpStatus.CONFLICT, e.getMessage());
     }
 
-    /**
-     * @param exception
-     * @param httpStatus
-     * @param logRef
-     * @return
-     */
     private ResponseEntity<HttpError> error(final Exception exception, final HttpStatus httpStatus,
                                             final String logRef) {
         final String message = Optional.of(exception.getMessage()).orElse(exception.getClass().getSimpleName());

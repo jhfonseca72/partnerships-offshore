@@ -51,11 +51,8 @@ public class EventControllerTest {
 
     private static final String URL = "/events";
 
-    /**
-     * @param events
-     * @throws Exception
-     */
-    @DisplayName("")
+   
+    @DisplayName("Should return all events")
     @ParameterizedTest(name = "\"{0}\" should be return in the response")
     @MethodSource({"findAllEvents"})
     @SuppressWarnings("unchecked")
@@ -74,11 +71,8 @@ public class EventControllerTest {
         Assertions.assertThat(json).isEqualTo(mapper.writeValueAsString(events));
     }
 
-    /**
-     * @param event
-     * @throws Exception
-     */
-    @DisplayName("")
+   
+    @DisplayName("Shoudl create a new event")
     @ParameterizedTest(name = "\"{0}\" should create a new event")
     @MethodSource({"createEvents"})
     @SuppressWarnings("unchecked")
@@ -101,6 +95,7 @@ public class EventControllerTest {
     }
 
     /**
+     * Mocks to test the method to get all events
      * @return
      */
     private static Stream<List<Event>> findAllEvents() {
@@ -109,6 +104,7 @@ public class EventControllerTest {
     }
 
     /**
+     * Mock to test the method that allow to create new events
      * @return
      */
     private static Stream<Event> createEvents() {

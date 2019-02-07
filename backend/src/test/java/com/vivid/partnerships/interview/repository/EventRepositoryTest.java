@@ -25,9 +25,6 @@ public class EventRepositoryTest {
     @Autowired
     EventRepository eventRepository;
 
-    /**
-     *
-     */
     @Test
     public void shouldFindDefaultChicagoEvent() {
         List<Event> events = eventRepository.getEvents();
@@ -35,9 +32,6 @@ public class EventRepositoryTest {
                 .isEqualTo("Chicago White Sox vs. Chicago Cubs");
     }
 
-    /**
-     *
-     */
     @Test
     public void shouldFindAllEvents() {
         Event event = TestUtil.createMockEvent("Event", "Chicago", "Chicago",

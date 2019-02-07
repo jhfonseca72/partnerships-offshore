@@ -18,9 +18,6 @@ public class EventController {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventController.class);
     private final EventService eventService;
 
-    /**
-     * @return
-     */
     @GetMapping("/events")
     public List<Event> getEvents() {
         List<Event> events = this.eventService.getEvents();
@@ -28,11 +25,6 @@ public class EventController {
         return events;
     }
 
-    /**
-     * @param event
-     * @return
-     * @throws EventException
-     */
     @PostMapping("/events")
     public Event createEvent(@RequestBody Event event) throws EventException {
         LOGGER.info("Creating a new event {} ", event);

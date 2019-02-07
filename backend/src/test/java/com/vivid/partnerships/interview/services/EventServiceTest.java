@@ -32,7 +32,7 @@ public class EventServiceTest {
 
 
     @Test
-    @DisplayName("")
+    @DisplayName("Must search all events")
     public void shouldReturnAllEvents() {
         Event firstEvent = TestUtil.createMockEvent("Event", "Chicago", "Chicago", "Illinois");
         when(this.repository.getEvents()).thenReturn(Arrays.asList(firstEvent));
@@ -42,7 +42,7 @@ public class EventServiceTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Must create a new event")
     public void shouldCreateNewEvent() throws EventException {
         Event firstEvent = TestUtil.createMockEvent("Event", "Chicago", "Chicago", "Illinois");
         when(this.repository.createEventWithNewVenue(any(Event.class))).thenReturn(Optional.of(firstEvent));
@@ -52,7 +52,7 @@ public class EventServiceTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Should fail if an event does not have a venue")
     public void shouldFailWhenEventDoesNotHaveVenue() {
         Event firstEvent = TestUtil.createMockEvent("Event", "Chicago", "Chicago", "Illinois");
         firstEvent.setVenue(null);
@@ -63,7 +63,7 @@ public class EventServiceTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Should fail if a venue does not have name")
     public void shouldFailWhenVenueDoesNotHaveName() {
         Event firstEvent = TestUtil.createMockEvent("Event", "Chicago", "Chicago", "Illinois");
         firstEvent.getVenue().setName(null);
@@ -75,7 +75,7 @@ public class EventServiceTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Should fail if a venue does not have city")
     public void shouldFailWhenVenueDoesNotHaveCity() {
         Event firstEvent = TestUtil.createMockEvent("Event", "Chicago", "Chicago", "Illinois");
         firstEvent.getVenue().setCity(null);
@@ -87,7 +87,7 @@ public class EventServiceTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Should fail if a venue does not have state")
     public void shouldFailWhenVenueDoesNotHaveState() {
         Event firstEvent = TestUtil.createMockEvent("Event", "Chicago", "Chicago", "Illinois");
         firstEvent.getVenue().setState(null);
